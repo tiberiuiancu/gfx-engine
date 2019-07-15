@@ -26,10 +26,6 @@ string
 utils.h
 /home/tiberiu/Desktop/rasterizer/utils.h
 
-/home/tiberiu/Desktop/rasterizer/graphics.cpp
-graphics.h
-/home/tiberiu/Desktop/rasterizer/graphics.h
-
 /home/tiberiu/Desktop/rasterizer/graphics.h
 math.h
 -
@@ -53,6 +49,26 @@ math.h
 -
 algorithm
 -
+geometry.h
+/home/tiberiu/Desktop/rasterizer/geometry.h
+
+/home/tiberiu/Desktop/rasterizer/main.cpp
+iostream
+-
+unistd.h
+-
+cstdlib
+-
+wrapper.h
+/home/tiberiu/Desktop/rasterizer/wrapper.h
+colors.h
+/home/tiberiu/Desktop/rasterizer/colors.h
+graphics.h
+/home/tiberiu/Desktop/rasterizer/graphics.h
+utils.h
+/home/tiberiu/Desktop/rasterizer/utils.h
+mafs.h
+/home/tiberiu/Desktop/rasterizer/mafs.h
 geometry.h
 /home/tiberiu/Desktop/rasterizer/geometry.h
 

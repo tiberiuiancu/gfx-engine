@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
     Timer t = Timer();
     t.start();
     for (int i = 0; i < 2; ++i) {
-        for (float cnt = 0.0f; cnt < 4.0f; cnt += 0.001f) {
+        for (float cnt = 0.0f; cnt < 4.0f; cnt += 0.005f) {
             float rotateAmt = (float)t.stop() / 1000;
 
             // TODO: clean code above for

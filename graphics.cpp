@@ -334,47 +334,77 @@ Triangle2d scaleIntoView(Triangle2d t, int W, int H) {
     return t;
 }
 
+//void renderTriangle(Triangle t, float matView[4][4], int width, int height) {
+//
+//    t = toViewSpace(t, matView);
+//
+//    Triangle right = { {1, 0, 0}, {1, 0, 1}, {1, 1, 0} };
+//    Triangle left = { {-1, 0, 0}, {-1, 0, 1}, {-1, 1, 0} };
+//    Triangle up = { {0, 1, 0}, {1, 1, 0}, {0, 1, 1} };
+//    Triangle down = { {0, -1, 0}, {1, -1, 0}, {0, -1, 1} };
+//
+//    Plane cameraPlane = Plane( {0, 0, 0.1f}, {0, 0, 1} );
+//    Plane rightPlane = Plane( {1, 0, 0}, getNormal(right) );
+//    Plane upPlane = Plane( {0, 1, 0}, getNormal(up) );
+//    Plane leftPlane = Plane( {-1, 0, 0}, Vec3(0, 0, 0) - getNormal(left) );
+//    Plane downPlane = Plane( {0, -1, 0}, Vec3(0, 0, 0) - getNormal(down) );
+//
+//    // clip against the camera plane
+//    std::vector<Triangle> triangles = clip(t, cameraPlane);
+//
+//    for (auto triangle : triangles) {
+//
+//        drawTriangle(scaleIntoView(project(triangle), width, height), triangle);
+////        drawMeshTriangle(scaleIntoView(project(triangle), width, height), BLACK);
+//    }
+//
+//    // TODO: clipping
+//
+////    for (auto triangle:triangles) {
+////        Triangle projected = project3d(triangle);
+////
+////        // clip against the screen edges
+////        std::vector <Triangle> clippedTriangles = { projected };
+////        clippedTriangles = clip(clippedTriangles, rightPlane);
+////        clippedTriangles = clip(clippedTriangles, leftPlane);
+////        clippedTriangles = clip(clippedTriangles, upPlane);
+////        clippedTriangles = clip(clippedTriangles, downPlane);
+////
+////        for (auto clippedTriangle: clippedTriangles) {
+////            drawTriangle(scaleIntoView(clippedTriangle.toTriangle2d(), width, height), clippedTriangle, RGBColor::randomColor());
+////            drawMeshTriangle(scaleIntoView(clippedTriangle.toTriangle2d(), width, height), BLACK);
+////        }
+////    }
+//}
+
 void renderTriangle(Triangle t, float matView[4][4], int width, int height) {
 
     t = toViewSpace(t, matView);
 
-    Triangle right = { {1, 0, 0}, {1, 0, 1}, {1, 1, 0} };
-    Triangle left = { {-1, 0, 0}, {-1, 0, 1}, {-1, 1, 0} };
-    Triangle up = { {0, 1, 0}, {1, 1, 0}, {0, 1, 1} };
-    Triangle down = { {0, -1, 0}, {1, -1, 0}, {0, -1, 1} };
+    Triangle right = rotateAboutY( {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}}, -degToRad(fFov) / 2 );
+    Triangle left = rotateAboutY( {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}}, degToRad(fFov) / 2);
+    Triangle up = rotateAboutX( {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}}, degToRad(fFov / fAspectRatio) / 2 );
+    Triangle down = rotateAboutX( {{0, 0, 0}, {1, 0, 0}, {0, 1, 0}}, -degToRad(fFov / fAspectRatio) / 2 );
 
-    Plane cameraPlane = Plane( {0, 0, 0.1f}, {0, 0, 1} );
-    Plane rightPlane = Plane( {1, 0, 0}, getNormal(right) );
-    Plane upPlane = Plane( {0, 1, 0}, getNormal(up) );
-    Plane leftPlane = Plane( {-1, 0, 0}, Vec3(0, 0, 0) - getNormal(left) );
-    Plane downPlane = Plane( {0, -1, 0}, Vec3(0, 0, 0) - getNormal(down) );
+    Plane cameraPlane = Plane( {0, 0, fNear}, {0, 0, 1} );
+    Plane rightPlane = Plane( {0, 0, 0}, getNormal(right) );
+    Plane leftPlane = Plane( {0, 0, 0}, getNormal(left) );
+    Plane upPlane = Plane( {0, 0, 0}, getNormal(up) );
+    Plane downPlane = Plane( {0, 0, 0}, getNormal(down) );
 
     // clip against the camera plane
-    std::vector<Triangle> triangles = clip(t, cameraPlane);
+    std::vector<Triangle> triangles = {t};
+    triangles = clip(triangles, cameraPlane);
+    triangles = clip(triangles, rightPlane);
+    triangles = clip(triangles, leftPlane);
+    triangles = clip(triangles, upPlane);
+    triangles = clip(triangles, downPlane);
 
     for (auto triangle : triangles) {
 
         drawTriangle(scaleIntoView(project(triangle), width, height), triangle);
 //        drawMeshTriangle(scaleIntoView(project(triangle), width, height), BLACK);
     }
-
-    // TODO: clipping
-
-//    for (auto triangle:triangles) {
-//        Triangle projected = project3d(triangle);
-//
-//        // clip against the screen edges
-//        std::vector <Triangle> clippedTriangles = { projected };
-//        clippedTriangles = clip(clippedTriangles, rightPlane);
-//        clippedTriangles = clip(clippedTriangles, leftPlane);
-//        clippedTriangles = clip(clippedTriangles, upPlane);
-//        clippedTriangles = clip(clippedTriangles, downPlane);
-//
-//        for (auto clippedTriangle: clippedTriangles) {
-//            drawTriangle(scaleIntoView(clippedTriangle.toTriangle2d(), width, height), clippedTriangle, RGBColor::randomColor());
-//            drawMeshTriangle(scaleIntoView(clippedTriangle.toTriangle2d(), width, height), BLACK);
-//        }
-//    }
 }
 
 std::vector<Triangle> clip(Triangle t, Plane p) {
@@ -475,6 +505,7 @@ Triangle rotate(Triangle t, float a0, float a1, float a2) {
     return {rotate(t.v[0], a0, a1, a2), rotate(t.v[1], a0, a1, a2), rotate(t.v[2], a0, a1, a2)};
 }
 
+// probably badly implemented
 Vec3 rotate(Vec3 v, float a0, float a1, float a2) {
 
     float c0 = cos(a0);
@@ -522,6 +553,61 @@ Vec3 rotate(Vec3 v, float a0, float a1, float a2) {
 
 //    return matmul(rotY, matmul(rotX, matmul(rotZ, v)));
 }
+
+Triangle rotateAboutX(Triangle t, float a) {
+    return {
+        rotateAboutX(t.v[0], a),
+        rotateAboutX(t.v[1], a),
+        rotateAboutX(t.v[2], a)
+    };
+}
+
+Triangle rotateAboutY(Triangle t, float a) {
+    return {
+        rotateAboutY(t.v[0], a),
+        rotateAboutY(t.v[1], a),
+        rotateAboutY(t.v[2], a)
+    };
+}
+
+Triangle rotateAboutZ(Triangle t, float a) {
+    return {
+        rotateAboutZ(t.v[0], a),
+        rotateAboutZ(t.v[1], a),
+        rotateAboutZ(t.v[2], a)
+    };
+}
+
+Vec3 rotateAboutX(Vec3 v, float a) {
+
+
+        float rotX[3][3] = { {1, 0, 0},
+                         {0, cosf(a), -sinf(a)},
+                         {0, sinf(a), cosf(a)}};
+
+        return matmul(rotX, v);
+}
+
+Vec3 rotateAboutY(Vec3 v, float a) {
+
+    float rotY[3][3] = { {cosf(a), 0, sinf(a)  },
+                         {0, 1, 0},
+                         {-sinf(a), 0, cosf(a)}};
+
+    return matmul(rotY, v);
+}
+
+
+Vec3 rotateAboutZ(Vec3 v, float a) {
+
+
+    float rotZ[3][3] = { {cosf(a), -sinf(a), 0},
+                         {sinf(a),  cosf(a), 0},
+                         {0, 0, 1}};
+
+    return matmul(rotZ, v);
+}
+
 
 bool isVisible(Triangle t, Vec3 camera) {
     Vec3 normal = getNormal(t);
