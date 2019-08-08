@@ -1,1 +1,0 @@
-/usr/bin/c++  -g   CMakeFiles/rasterizer.dir/main.cpp.o CMakeFiles/rasterizer.dir/wrapper.cpp.o CMakeFiles/rasterizer.dir/graphics.cpp.o CMakeFiles/rasterizer.dir/utils.cpp.o CMakeFiles/rasterizer.dir/mafs.cpp.o  -o rasterizer /usr/lib/x86_64-linux-gnu/libOpenGL.so /usr/lib/x86_64-linux-gnu/libGLX.so /usr/lib/x86_64-linux-gnu/libGLU.so /usr/lib/x86_64-linux-gnu/libglut.so 
